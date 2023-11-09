@@ -26,6 +26,8 @@ import {
   themeConst,
 } from "./consts/parameters";
 import { ContractWrapper } from "@thirdweb-dev/sdk/dist/declarations/src/evm/core/classes/contract-wrapper";
+import { useForm } from "react-hook-form";
+
 
 const urlParams = new URL(window.location.toString()).searchParams;
 const contractAddress = urlParams.get("contract") || contractConst || "";
@@ -301,6 +303,17 @@ export default function Home() {
       </div>
     );
   }
+  // Add this inside your Home function
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange', reValidateMode: 'onSubmit' });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const onSubmit = (data: any) => {
+    console.log("button clicked");
+    setIsSubmitted(true);
+    if (isValid) {
+      console.log(data); // Replace this line with your minting function
+    }
+  };
 
   return (
     <div className="w-screen min-h-screen">
@@ -358,11 +371,11 @@ export default function Home() {
               </h1>
               {contractMetadata.data?.description ||
                 contractMetadata.isLoading ? (
-                  <div className="text-gray-500 line-clamp-2">
+                <div className="text-gray-500 line-clamp-2">
                   {contractMetadata.isLoading ? (
                     <div
                       role="status"
-                        className="space-y-8 animate-pulse md:flex md:items-center md:space-x-8 md:space-y-0"
+                      className="space-y-8 animate-pulse md:flex md:items-center md:space-x-8 md:space-y-0"
                     >
                       <div className="w-full">
                         <div className="mb-2.5 h-2 max-w-[480px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
@@ -378,18 +391,57 @@ export default function Home() {
             </div>
             <div className="flex w-full gap-4">
               {dropNotReady ? (
-                <span className="text-red-500">
-                  This drop is not ready to be minted yet. (No claim condition
-                  set)
-                </span>
+                <div>
+                  <div className="w-fullmb-4 text-white">
+                    <h2>What you will get from this drop:</h2>
+                    <ul className="list-disc list-inside">
+                      <li>Tea from all 47 Prefecture of Japan</li>
+                      <li>In Custom US Made Wooden Box With Japan Map Engraved</li>
+                      <li>Unique NFT of the map of Japan</li>
+                      <li>A matcha kit</li>
+                      <li>Early Access to future drops</li>
+                      <li>Exclusive 1st NFT Drop Chat</li>
+                    </ul>
+                  </div>
+                  <span className="text-red-500">
+                    This drop is not ready to be minted yet. (No claim condition
+                    set)
+                  </span>
+                </div>
+
               ) : dropStartingSoon ? (
-                <span className="text-gray-500">
-                  Drop is starting soon. Please check back later.
-                </span>
+                <div>
+                  <div className="w-fullmb-4 text-white">
+                    <h2>What you will get from this drop:</h2>
+                    <ul className="list-disc list-inside">
+                      <li>Tea from all 47 Prefecture of Japan</li>
+                      <li>In Custom US Made Wooden Box With Japan Map Engraved</li>
+                      <li>Unique NFT of the map of Japan</li>
+                      <li>A matcha kit</li>
+                      <li>Early Access to future drops</li>
+                    </ul>
+                  </div>
+                  <span className="text-gray-500">
+                    Drop is starting soon. Please check back later.
+                  </span>
+                </div>
               ) : (
-                    <div className="flex flex-col w-full gap-4">
-                      <div className="flex flex-col w-full gap-4 lg:flex-row lg:items-center lg:gap-4 ">
-                        <div className="flex w-full px-2 border border-gray-400 rounded-lg h-11 dark:border-gray-800 md:w-full">
+                <div className="flex flex-col w-full gap-4">
+                  <div className="w-fullmb-4 text-white">
+                    <h2>What you will get:</h2>
+                    <ul className="list-disc list-inside">
+                      <li>Tea from all 47 Prefecture of Japan</li>
+                      <li>In Custom US Made Wooden Box With Japan Map Engraved</li>
+                      <li>Unique NFT of the map of Japan</li>
+                      <li>A matcha kit</li>
+                      <li>Early Access to future drops</li>
+                    </ul>
+                  </div>
+                  {(!canClaim || buttonLoading || !isValid) && (
+                    <p className="text-sm text-gray-400">Please fill out the form before minting. Address is needed to ship the custom wooden box and tea.</p>
+                  )}
+                  <div className="flex flex-col w-full gap-4 lg:flex-row lg:items-center lg:gap-4 ">
+                    <div className="flex w-full px-2 border border-gray-400 rounded-lg h-11 dark:border-gray-800 md:w-full">
                       <button
                         onClick={() => {
                           const value = quantity - 1;
@@ -401,12 +453,12 @@ export default function Home() {
                             setQuantity(value);
                           }
                         }}
-                            className="flex items-center justify-center h-full px-2 text-2xl text-center rounded-l-md disabled:cursor-not-allowed disabled:text-gray-500 dark:text-white dark:disabled:text-gray-600"
+                        className="flex items-center justify-center h-full px-2 text-2xl text-center rounded-l-md disabled:cursor-not-allowed disabled:text-gray-500 dark:text-white dark:disabled:text-gray-600"
                         disabled={isSoldOut || quantity - 1 < 1}
                       >
                         -
                       </button>
-                          <p className="flex items-center justify-center w-full h-full font-mono text-center dark:text-white lg:w-full">
+                      <p className="flex items-center justify-center w-full h-full font-mono text-center dark:text-white lg:w-full">
                         {!isLoading && isSoldOut ? "Sold Out" : quantity}
                       </p>
                       <button
@@ -428,71 +480,82 @@ export default function Home() {
                         +
                       </button>
                     </div>
-                    <Web3Button
-                      contractAddress={
-                        contractQuery.contract?.getAddress() || ""
-                      }
-                      style={{
-                        backgroundColor:
-                          colors[primaryColor as keyof typeof colors] ||
-                          primaryColor,
-                        maxHeight: "43px",
-                      }}
-                      theme={theme}
-                      action={(cntr) => cntr.erc721.claim(quantity)}
-                      isDisabled={!canClaim || buttonLoading}
-                      onError={(err) => {
-                        console.error(err);
-                        console.log({ err });
-                        toast({
-                          title: "Failed to mint drop",
-                          description: (err as any).reason || "",
-                          duration: 9000,
-                          variant: "destructive",
-                        });
-                      }}
-                      onSuccess={() => {
-                        toast({
-                          title: "Successfully minted",
-                          description:
-                            "The NFT has been transferred to your wallet",
-                          duration: 5000,
-                          className: "bg-green-500",
-                        });
-                      }}
-                    >
-                      {buttonLoading ? (
-                        <div role="status">
-                          <svg
-                            aria-hidden="true"
-                                className="w-4 h-4 mr-2 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
-                            viewBox="0 0 100 101"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                              fill="currentColor"
-                            />
-                            <path
-                              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                              fill="currentFill"
-                            />
-                          </svg>
-                          <span className="sr-only">Loading...</span>
-                        </div>
-                      ) : (
-                        buttonText
-                      )}
-                    </Web3Button>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <input {...register("name", { required: true })} placeholder="Name" className={`mb-4 p-2 rounded-lg border-2 ${errors.name ? 'border-red-500' : 'bg-gray-800'} outline-none`} />
+
+                      <input {...register("address", { required: true })} placeholder="Shipping Address" className={`mb-4 p-2 rounded-lg border-2 ${errors.address ? 'border-red-500' : 'bg-gray-800'} outline-none`} />
+
+                      <input {...register("email", { required: true, pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/ })} placeholder="Email" className={`mb-4 p-2 rounded-lg border-2 ${errors.email ? 'border-red-500' : 'bg-gray-800'} outline-none`} />
+
+                      <Web3Button
+                        contractAddress={contractQuery.contract?.getAddress() || ""}
+                        style={{
+                          backgroundColor:
+                            colors[primaryColor as keyof typeof colors] ||
+                            primaryColor,
+                          maxHeight: "43px",
+                        }}
+                        theme={theme}
+                        action={(cntr) => {
+                          if (isValid) {
+                            cntr.erc721.claim(quantity)
+                          }
+                        }}
+                        isDisabled={!canClaim || buttonLoading || !isValid}
+                        onError={(err) => {
+                          console.error(err);
+                          console.log({ err });
+                          toast({
+                            title: "Failed to mint drop",
+                            description: (err as any).reason || "",
+                            duration: 9000,
+                            variant: "destructive",
+                          });
+                        }}
+                        onSuccess={() => {
+                          toast({
+                            title: "Successfully minted",
+                            description:
+                              "The NFT has been transferred to your wallet",
+                            duration: 5000,
+                            className: "bg-green-500",
+                          });
+                        }}
+                      >
+                        {buttonLoading ? (
+                          <div role="status">
+                            <svg
+                              aria-hidden="true"
+                              className="w-4 h-4 mr-2 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                              viewBox="0 0 100 101"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor"
+                              />
+                              <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill"
+                              />
+                            </svg>
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          buttonText
+                        )}
+                      </Web3Button>
+                    </form>
                   </div>
+                  {isSubmitted && !isValid && <span className="text-center text-red-500">Please fill out the form correctly before minting.</span>}
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <PoweredBy />
+      {/* <PoweredBy /> */}
     </div>
   );
 }
