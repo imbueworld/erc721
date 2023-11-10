@@ -21,6 +21,7 @@ import { parseIneligibility } from "./utils/parseIneligibility";
 import {
   clientIdConst,
   contractConst,
+  secondContractConst,
   primaryColorConst,
   themeConst,
 } from "./consts/parameters";
@@ -314,8 +315,33 @@ export default function Home() {
     }
   };
 
+  // Define the contract address for the second collection
+const secondContractAddress = urlParams.get("secondContract") || secondContractConst || "";
+
+// Use the useContract hook to get the contract for the second collection
+const secondContractQuery = useContract(secondContractAddress);
+
+// Get the metadata for the second contract
+const secondContractMetadata = useContractMetadata(secondContractQuery.contract);
+
+// Get the unclaimed and claimed supply for the second contract
+const secondUnclaimedSupply = useUnclaimedNFTSupply(secondContractQuery.contract);
+const secondClaimedSupply = useClaimedNFTSupply(secondContractQuery.contract);
+
+// Calculate the number of claimed and total NFTs for the second contract
+const secondNumberClaimed = useMemo(() => {
+  return BigNumber.from(secondClaimedSupply.data || 0).toString();
+}, [secondClaimedSupply]);
+
+const secondNumberTotal = useMemo(() => {
+  return BigNumber.from(secondClaimedSupply.data || 0)
+    .add(BigNumber.from(secondUnclaimedSupply.data || 0))
+    .toString();
+}, [secondClaimedSupply.data, secondUnclaimedSupply.data]);
+
+
   return (
-    <div className="w-screen min-h-screen">
+<div className="flex flex-col items-center justify-center min-h-screen">
       <ConnectWallet className="!absolute !right-4 !top-4" theme={theme} />
       <div className="grid h-screen grid-cols-1 lg:grid-cols-12">
         <div className="items-center justify-center hidden w-full h-full lg:col-span-5 lg:flex lg:px-12">
@@ -487,8 +513,211 @@ export default function Home() {
                       <input {...register("email", { required: true, pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/ })} placeholder="Email" className={`mb-4 p-2 rounded-lg border-2 ${errors.email ? 'border-red-500' : 'bg-gray-800'} outline-none`} />
 
                       <Web3Button
-                      contractAddress={
-                        contractQuery.contract?.getAddress() || ""
+                        contractAddress={
+                          contractQuery.contract?.getAddress() || ""
+                        }
+                        style={{
+                          backgroundColor:
+                            colors[primaryColor as keyof typeof colors] ||
+                            primaryColor,
+                          maxHeight: "43px",
+                        }}
+                        theme={theme}
+                        action={(cntr) => cntr.erc721.claim(quantity)}
+                        isDisabled={!canClaim || buttonLoading}
+                        onError={(err) => {
+                          console.error(err);
+                          console.log({ err });
+                          toast({
+                            title: "Failed to mint drop",
+                            description: (err as any).reason || "",
+                            duration: 9000,
+                            variant: "destructive",
+                          });
+                        }}
+                        onSuccess={() => {
+                          toast({
+                            title: "Successfully minted",
+                            description:
+                              "The NFT has been transferred to your wallet",
+                            duration: 5000,
+                            className: "bg-green-500",
+                          });
+                        }}
+                      >
+                        {buttonLoading ? (
+                          <div role="status">
+                            <svg
+                              aria-hidden="true"
+                              className="w-4 h-4 mr-2 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                              viewBox="0 0 100 101"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor"
+                              />
+                              <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill"
+                              />
+                            </svg>
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          buttonText
+                        )}
+                      </Web3Button>
+                    </form>
+                  </div>
+                  {isSubmitted && !isValid && <span className="text-center text-red-500">Please fill out the form correctly before minting.</span>}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col items-center justify-center mt-4">
+              <p className="text-lg font-bold">Don't want any tea? Mint a regular NFT below!</p>
+              <svg className="w-4 h-4 animate-bounce mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="grid h-screen grid-cols-1 lg:grid-cols-12">
+        <div className="items-center justify-center hidden w-full h-full lg:col-span-5 lg:flex lg:px-12">
+          <HeadingImage
+            src={secondContractMetadata.data?.image || firstNft?.metadata.image || ""}
+            isLoading={isLoading}
+          />
+        </div>
+        <div className="flex items-center justify-center w-full h-full col-span-1 lg:col-span-7">
+          <div className="flex flex-col w-full max-w-xl gap-4 p-12 rounded-xl lg:border lg:border-gray-400 lg:dark:border-gray-800">
+            <div className="flex w-full mt-8 xs:mb-8 xs:mt-0 lg:hidden">
+              <HeadingImage
+                src={secondContractMetadata.data?.image || firstNft?.metadata.image || ""}
+                isLoading={isLoading}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 xs:gap-4">
+              {isLoading ? (
+                <div
+                  role="status"
+                  className="space-y-8 animate-pulse md:flex md:items-center md:space-x-8 md:space-y-0"
+                >
+                  <div className="w-full">
+                    <div className="w-24 h-10 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                  </div>
+                </div>
+              ) : isOpenEdition ? null : (
+                <p>
+                  <span className="text-lg font-bold tracking-wider text-gray-500 xs:text-xl lg:text-2xl">
+                    {secondNumberClaimed}
+                  </span>{" "}
+                  <span className="text-lg font-bold tracking-wider xs:text-xl lg:text-2xl">
+                    / {secondNumberTotal} minted
+                  </span>
+                </p>
+              )}
+              <h1 className="text-2xl font-bold line-clamp-1 xs:text-3xl lg:text-4xl">
+                {secondContractMetadata.isLoading ? (
+                  <div
+                    role="status"
+                    className="space-y-8 animate-pulse md:flex md:items-center md:space-x-8 md:space-y-0"
+                  >
+                    <div className="w-full">
+                      <div className="w-48 h-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                ) : (
+                  secondContractMetadata.data?.name
+                )}
+              </h1>
+              {secondContractMetadata.data?.description ||
+                secondContractMetadata.isLoading ? (
+                <div className="text-gray-500 line-clamp-2">
+                  {secondContractMetadata.isLoading ? (
+                    <div
+                      role="status"
+                      className="space-y-8 animate-pulse md:flex md:items-center md:space-x-8 md:space-y-0"
+                    >
+                      <div className="w-full">
+                        <div className="mb-2.5 h-2 max-w-[480px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                        <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                      </div>
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    contractMetadata.data?.description
+                  )}
+                </div>
+              ) : null}
+            </div>
+            <div className="flex w-full gap-4">
+              {dropNotReady ? (
+                <div>
+                  <span className="text-red-500">
+                    This drop is not ready to be minted yet. (No claim condition
+                    set)
+                  </span>
+                </div>
+
+              ) : dropStartingSoon ? (
+                <div>
+                  <span className="text-gray-500">
+                    Drop is starting soon. Please check back later.
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col w-full gap-4">
+                  {(!canClaim || buttonLoading) && (
+                    <p className="text-sm text-gray-400"> Address is needed to ship the custom wooden box and tea.</p>
+                  )}
+                  <div className="flex flex-col w-full gap-4 lg:flex-row lg:items-center lg:gap-4 ">
+                    <div className="flex w-full px-2 border border-gray-400 rounded-lg h-11 dark:border-gray-800 md:w-full">
+                      <button
+                        onClick={() => {
+                          const value = quantity - 1;
+                          if (value > maxClaimable) {
+                            setQuantity(maxClaimable);
+                          } else if (value < 1) {
+                            setQuantity(1);
+                          } else {
+                            setQuantity(value);
+                          }
+                        }}
+                        className="flex items-center justify-center h-full px-2 text-2xl text-center rounded-l-md disabled:cursor-not-allowed disabled:text-gray-500 dark:text-white dark:disabled:text-gray-600"
+                        disabled={isSoldOut || quantity - 1 < 1}
+                      >
+                        -
+                      </button>
+                      <p className="flex items-center justify-center w-full h-full font-mono text-center dark:text-white lg:w-full">
+                        {!isLoading && isSoldOut ? "Sold Out" : quantity}
+                      </p>
+                      <button
+                        onClick={() => {
+                          const value = quantity + 1;
+                          if (value > maxClaimable) {
+                            setQuantity(maxClaimable);
+                          } else if (value < 1) {
+                            setQuantity(1);
+                          } else {
+                            setQuantity(value);
+                          }
+                        }}
+                        className={
+                          "flex h-full items-center justify-center rounded-r-md px-2 text-center text-2xl disabled:cursor-not-allowed disabled:text-gray-500 dark:text-white dark:disabled:text-gray-600"
+                        }
+                        disabled={isSoldOut || quantity + 1 > maxClaimable}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <Web3Button
+                      secondContractAddress={
+                        secondContractQuery.contract?.getAddress() || ""
                       }
                       style={{
                         backgroundColor:
@@ -523,7 +752,7 @@ export default function Home() {
                         <div role="status">
                           <svg
                             aria-hidden="true"
-                                className="w-4 h-4 mr-2 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
+                            className="w-4 h-4 mr-2 text-gray-200 animate-spin fill-blue-600 dark:text-gray-600"
                             viewBox="0 0 100 101"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -543,16 +772,16 @@ export default function Home() {
                         buttonText
                       )}
                     </Web3Button>
-                    </form>
                   </div>
                   {isSubmitted && !isValid && <span className="text-center text-red-500">Please fill out the form correctly before minting.</span>}
                 </div>
               )}
             </div>
           </div>
+
         </div>
       </div>
-      {/* <PoweredBy /> */}
+
     </div>
   );
 }
