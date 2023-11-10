@@ -579,12 +579,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-            {/* <div className="flex flex-col items-center justify-center mt-4">
-              <p className="text-lg font-bold">Don't want any tea? Mint a regular NFT below!</p>
-              <svg className="w-4 h-4 animate-bounce mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-              </svg>
-            </div> */}
           </div>
         </div>
       </div>
