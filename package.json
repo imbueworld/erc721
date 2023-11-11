@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
+    "@firebase/database": "^1.0.1",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@radix-ui/react-toast": "^1.1.3",
@@ -19,6 +20,7 @@
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "ethers": "^5",
+    "firebase": "^10.6.0",
     "lucide-react": "^0.214.0",
     "react": "^18.2",
     "react-dom": "^18.2",
@@ -27,6 +29,7 @@
     "tailwindcss-animate": "^1.0.5"
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^4.0.0",

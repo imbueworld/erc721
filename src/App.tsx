@@ -21,12 +21,14 @@ import { parseIneligibility } from "./utils/parseIneligibility";
 import {
   clientIdConst,
   contractConst,
-  secondContractConst,
+  // secondContractConst,
   primaryColorConst,
   themeConst,
 } from "./consts/parameters";
 import { ContractWrapper } from "@thirdweb-dev/sdk/dist/declarations/src/evm/core/classes/contract-wrapper";
 import { useForm } from "react-hook-form";
+import { getDatabase, ref, push } from "firebase/database";
+import { getApps, initializeApp } from 'firebase/app';
 
 
 const urlParams = new URL(window.location.toString()).searchParams;
@@ -307,42 +309,63 @@ export default function Home() {
   const { register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange', reValidateMode: 'onSubmit' });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  if (!getApps().length) {
+    initializeApp({
+        apiKey: "AIzaSyDV5kyZ1iVrKGO7eKaSdlTPRgxb-8ldo_o",
+        authDomain: "greenteadao-dbc3e.firebaseapp.com",
+        projectId: "greenteadao-dbc3e",
+        storageBucket: "greenteadao-dbc3e.appspot.com",
+        messagingSenderId: "163956433340",
+        appId: "1:163956433340:web:e88ce8e0014b2c92760bb9",
+        measurementId: "G-GXZWTFN3D1"
+    });
+  }
+  
+
+  const db = getDatabase();
+
   const onSubmit = (data: any) => {
     console.log("button clicked");
     setIsSubmitted(true);
     if (isValid) {
       console.log(data); // Replace this line with your minting function
-    }
+  
+      // Save data to Firebase
+      push(ref(db, 'formSubmissions'), {
+        ...data,
+        nftsMinted: quantity, // Add the quantity of NFTs minted
+      });
   };
+}
 
   // Replace contractAddress with secondContractConst
-  const secondContractQuery = useContract(secondContractConst);
+  // const secondContractQuery = useContract(secondContractConst);
 
-  // Replace contractMetadata with secondContractMetadata
-  const secondContractMetadata = useContractMetadata(secondContractQuery.contract);
+  // // Replace contractMetadata with secondContractMetadata
+  // const secondContractMetadata = useContractMetadata(secondContractQuery.contract);
 
-  // Replace contractQuery with secondContractQuery
-  const secondUnclaimedSupply = useUnclaimedNFTSupply(secondContractQuery.contract);
-  const secondClaimedSupply = useClaimedNFTSupply(secondContractQuery.contract);
+  // // Replace contractQuery with secondContractQuery
+  // const secondUnclaimedSupply = useUnclaimedNFTSupply(secondContractQuery.contract);
+  // const secondClaimedSupply = useClaimedNFTSupply(secondContractQuery.contract);
 
-  // Replace contractQuery with secondContractQuery
-  const secondClaimConditions = useClaimConditions(secondContractQuery.contract);
-  const secondActiveClaimCondition = useActiveClaimConditionForWallet(
-    secondContractQuery.contract,
-    address,
-  );
+  // // Replace contractQuery with secondContractQuery
+  // const secondClaimConditions = useClaimConditions(secondContractQuery.contract);
+  // const secondActiveClaimCondition = useActiveClaimConditionForWallet(
+  //   secondContractQuery.contract,
+  //   address,
+  // );
 
-  // Replace contractQuery with secondContractQuery
-  const secondClaimerProofs = useClaimerProofs(secondContractQuery.contract, address || "");
+  // // Replace contractQuery with secondContractQuery
+  // const secondClaimerProofs = useClaimerProofs(secondContractQuery.contract, address || "");
 
-  // Replace contractQuery with secondContractQuery
-  const secondClaimIneligibilityReasons = useClaimIneligibilityReasons(
-    secondContractQuery.contract,
-    {
-      quantity,
-      walletAddress: address || "",
-    },
-  );
+  // // Replace contractQuery with secondContractQuery
+  // const secondClaimIneligibilityReasons = useClaimIneligibilityReasons(
+  //   secondContractQuery.contract,
+  //   {
+  //     quantity,
+  //     walletAddress: address || "",
+  //   },
+  // );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
