@@ -7,7 +7,7 @@ export const contractConst = "0x00Cc2410a5CA1c895d4dED94e500822532BBAB16";
 
 // The name of the chain your contract is deployed to.
 // Refer to README.md on how to specify the chain name.
-export const chainConst = "goerli";
+export const chainConst = "ethereum";
 
 // It is IMPORTANT to provide your own API key to use the thirdweb SDK and infrastructure.
 // Please ensure that you define the correct domain for your API key from the API settings page.
