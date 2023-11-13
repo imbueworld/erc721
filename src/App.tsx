@@ -484,7 +484,7 @@ export default function Home() {
                     <h2>What you will get:</h2>
                     <ul className="list-disc list-inside">
                       <li>Tea from all 47 Prefecture of Japan</li>
-                      <li>In Custom US Made Wooden Box With Japan Map Engraved</li>
+                      <li>In Custom USA Made Wooden Box With Japan Map Engraved</li>
                       <li>Unique NFT of the map of Japan</li>
                       <li>A matcha kit</li>
                       <li>Early Access to future drops</li>
