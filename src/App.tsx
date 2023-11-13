@@ -29,6 +29,7 @@ import { ContractWrapper } from "@thirdweb-dev/sdk/dist/declarations/src/evm/cor
 import { useForm } from "react-hook-form";
 import { getDatabase, ref, push } from "firebase/database";
 import { getApps, initializeApp } from 'firebase/app';
+import localImage from './nftmain.png'; // replace with the actual path to your image file
 
 
 const urlParams = new URL(window.location.toString()).searchParams;
@@ -373,7 +374,8 @@ export default function Home() {
       <div className="grid h-screen grid-cols-1 lg:grid-cols-12">
         <div className="items-center justify-center hidden w-full h-full lg:col-span-5 lg:flex lg:px-12">
           <HeadingImage
-            src={contractMetadata.data?.image || firstNft?.metadata.image || ""}
+            src={localImage}
+              // || contractMetadata.data?.image || firstNft?.metadata.image || ""}
             isLoading={isLoading}
           />
         </div>
@@ -381,7 +383,7 @@ export default function Home() {
           <div className="flex flex-col w-full max-w-xl gap-4 p-12 rounded-xl lg:border lg:border-gray-400 lg:dark:border-gray-800">
             <div className="flex w-full mt-8 xs:mb-8 xs:mt-0 lg:hidden">
               <HeadingImage
-                src={contractMetadata.data?.image || firstNft?.metadata.image || ""}
+                src={ localImage }
                 isLoading={isLoading}
               />
             </div>
