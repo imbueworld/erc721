@@ -312,16 +312,16 @@ export default function Home() {
 
   if (!getApps().length) {
     initializeApp({
-        apiKey: "AIzaSyDV5kyZ1iVrKGO7eKaSdlTPRgxb-8ldo_o",
-        authDomain: "greenteadao-dbc3e.firebaseapp.com",
-        projectId: "greenteadao-dbc3e",
-        storageBucket: "greenteadao-dbc3e.appspot.com",
-        messagingSenderId: "163956433340",
-        appId: "1:163956433340:web:e88ce8e0014b2c92760bb9",
-        measurementId: "G-GXZWTFN3D1"
+      apiKey: "AIzaSyDV5kyZ1iVrKGO7eKaSdlTPRgxb-8ldo_o",
+      authDomain: "greenteadao-dbc3e.firebaseapp.com",
+      projectId: "greenteadao-dbc3e",
+      storageBucket: "greenteadao-dbc3e.appspot.com",
+      messagingSenderId: "163956433340",
+      appId: "1:163956433340:web:e88ce8e0014b2c92760bb9",
+      measurementId: "G-GXZWTFN3D1"
     });
   }
-  
+
 
   const db = getDatabase();
 
@@ -330,14 +330,14 @@ export default function Home() {
     setIsSubmitted(true);
     if (isValid) {
       console.log(data); // Replace this line with your minting function
-  
+
       // Save data to Firebase
       push(ref(db, 'formSubmissions'), {
         ...data,
         nftsMinted: quantity, // Add the quantity of NFTs minted
       });
-  };
-}
+    };
+  }
 
   // Replace contractAddress with secondContractConst
   // const secondContractQuery = useContract(secondContractConst);
@@ -382,7 +382,7 @@ export default function Home() {
           <div className="flex flex-col w-full max-w-xl gap-4 p-12 rounded-xl lg:border lg:border-gray-400 lg:dark:border-gray-800">
             <div className="flex w-full mt-8 xs:mb-8 xs:mt-0 lg:hidden">
               <HeadingImage
-                src={ localImage || contractMetadata.data?.image || firstNft?.metadata.image || ""}
+                src={localImage || contractMetadata.data?.image || firstNft?.metadata.image || ""}
                 isLoading={isLoading}
               />
             </div>
@@ -600,6 +600,15 @@ export default function Home() {
                     </form>
                   </div>
                   {isSubmitted && !isValid && <span className="text-center text-red-500">Please fill out the form correctly before minting.</span>}
+                  <hr className="my-4" /> 
+                  <p className="text-center text-gray-400">or</p>
+                  <div className="flex justify-center">
+                    <a href="https://buy.stripe.com/4gw8xBe0S2Q6b5u6oo" target="_blank" rel="noopener noreferrer">
+                      <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                        Purchase with Credit Card
+                      </button>
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
