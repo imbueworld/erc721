@@ -490,7 +490,8 @@ export default function Home() {
                       <li>Early Access to future products (with NFT purchase)</li>
                     </ul>
                   </div>
-
+                  
+                  <hr className="my-4" /> 
 
                   <div className="flex justify-center">
                     <a href="https://buy.stripe.com/4gw8xBe0S2Q6b5u6oo" target="_blank" rel="noopener noreferrer">
