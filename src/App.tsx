@@ -485,11 +485,22 @@ export default function Home() {
                     <ul className="list-disc list-inside">
                       <li>Tea from all 47 Prefecture of Japan</li>
                       <li>In Custom USA Made Wooden Box With Japan Map Engraved</li>
-                      <li>Unique NFT of the map of Japan</li>
-                      <li>A matcha kit</li>
-                      <li>Early Access to future drops</li>
+                      <li>A ceremonial grade matcha kit + traditional japanese chasen</li>
+                      <li>Unique NFT of the map of Japan (with NFT purchase)</li>
+                      <li>Early Access to future products (with NFT purchase)</li>
                     </ul>
                   </div>
+
+
+                  <div className="flex justify-center">
+                    <a href="https://buy.stripe.com/4gw8xBe0S2Q6b5u6oo" target="_blank" rel="noopener noreferrer">
+                      <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                        Purchase with Credit Card
+                      </button>
+                    </a>
+                  </div>
+                  <hr className="my-4" /> 
+                  <p className="text-center text-gray-400">or</p>
                   {(!canClaim || buttonLoading || !isValid) && (
                     <p className="text-sm text-gray-400">Please fill out the form before minting. Address is needed to ship the custom wooden box and tea.</p>
                   )}
@@ -600,15 +611,6 @@ export default function Home() {
                     </form>
                   </div>
                   {isSubmitted && !isValid && <span className="text-center text-red-500">Please fill out the form correctly before minting.</span>}
-                  <hr className="my-4" /> 
-                  <p className="text-center text-gray-400">or</p>
-                  <div className="flex justify-center">
-                    <a href="https://buy.stripe.com/4gw8xBe0S2Q6b5u6oo" target="_blank" rel="noopener noreferrer">
-                      <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
-                        Purchase with Credit Card
-                      </button>
-                    </a>
-                  </div>
                 </div>
               )}
             </div>
