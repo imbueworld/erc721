@@ -492,14 +492,14 @@ export default function Home() {
                   </div>
                   
                   <hr className="my-4" /> 
-
+{/* 
                   <div className="flex justify-center">
                     <a href="https://buy.stripe.com/4gw8xBe0S2Q6b5u6oo" target="_blank" rel="noopener noreferrer">
                       <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
                         Purchase with Credit Card
                       </button>
                     </a>
-                  </div>
+                  </div> */}
                   <hr className="my-4" /> 
                   <p className="text-center text-gray-400">or</p>
                   {(!canClaim || buttonLoading || !isValid) && (
